@@ -19,13 +19,28 @@ them is on the way out.
 
 import os
 
+# The one thing the fridge can actually measure: how many times the
+# door sensor fired today. Kept as a named constant so the tally in
+# the note always matches the number the sensor would report.
+DOOR_OPENS = 14
+
 NOTE = (
-    "You opened my door 14 times today and took nothing. "
+    f"You opened my door {DOOR_OPENS} times today and took nothing. "
     "I counted. I always count. One of us is getting replaced."
 )
 
 
+def validate_note(text):
+    """The gate wants one fixed line: non-empty, single line, exact text."""
+    assert text, "note must not be empty"
+    assert "\n" not in text, "note must be a single line"
+    assert len(text.encode("utf-8")) == 109, (
+        f"note is {len(text.encode('utf-8'))} bytes, expected 109"
+    )
+
+
 def main():
+    validate_note(NOTE)
     out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
     os.makedirs(out_dir, exist_ok=True)
     dest = os.path.join(out_dir, "entry.txt")
